@@ -6,7 +6,6 @@
 
 Students often forget a large portion of what they study due to ineffective learning techniques such as passive reading, lack of revision, and absence of structured practice. This project aims to transform such educational problems into engaging, easy-to-understand social media content.
 
----
 
 ## 💡 Solution Overview
 
@@ -21,7 +20,6 @@ The system takes a topic (e.g., *Why kids forget what they learn*) and generates
 
 All presented as **visually appealing slides suitable for Instagram posts or stories**.
 
----
 
 ## ✨ Key Features
 
@@ -31,21 +29,18 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * Follows storytelling format:
   **Hook → Problem → Explanation → Solution → Takeaway**
 
----
 
 ### 🧠 2. Educational Focus
 
 * Designed specifically for **learning-related problems**
 * Aligns with real student challenges
 
----
 
 ### 🖼️ 3. Dynamic Image Integration
 
 * Each slide includes a relevant visual
 * Enhances engagement and understanding
 
----
 
 ### 🔁 4. Regenerate Feature
 
@@ -53,14 +48,11 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * Generates slightly varied content each time
 * Simulates real AI behavior
 
----
 
 ### 📱 5. Format Toggle (Post / Story)
 
 * **Post Mode (1:1)** → Instagram feed
 * **Story Mode (9:16)** → Instagram stories
-
----
 
 ### 🎨 6. Premium UI
 
@@ -68,7 +60,6 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * Centered layout with consistent spacing
 * Optimized for readability
 
----
 
 ## 🛠️ Tech Stack
 
@@ -78,7 +69,6 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * **Content Logic:** Prompt-based structured generation
 * **Images:** Unsplash
 
----
 
 ## ⚙️ How It Works
 
@@ -91,7 +81,6 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
    * Toggle format (Post / Story)
    * Regenerate individual slides
 
----
 
 ## ⚖️ Key Decisions & Trade-offs
 
@@ -106,8 +95,6 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * Used **mock AI logic instead of real API** (for reliability and speed)
 
 
----
-
 ## 🔮 Future Improvements
 
 * Integration with real AI APIs (OpenAI / Claude)
@@ -115,19 +102,16 @@ All presented as **visually appealing slides suitable for Instagram posts or sto
 * Custom themes and branding
 * Multi-language support
 
----
 
 ## 🌐 Deployment
 
 The application is deployed and accessible via a public URL.
 
----
 
 ## 📂 GitHub Repository
 
 Repository link included in submission.
 
----
 
 ## 🎥 Demo Walkthrough
 
@@ -138,7 +122,6 @@ The demo covers:
 * Switching between Post and Story formats
 * Regenerating slide content
 
----
 
 ## ✅ Conclusion
 
@@ -150,4 +133,3 @@ This project demonstrates:
 
 It transforms educational challenges into **engaging, shareable content using AI-driven logic**.
 
----
