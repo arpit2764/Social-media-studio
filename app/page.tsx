@@ -1,65 +1,318 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
+
+
+type Slide = {
+  title: string;
+  content: string;
+  image?: string; 
+};
 
 export default function Home() {
+  const [idea, setIdea] = useState<string>("");
+  const [slides, setSlides] = useState<Slide[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [format, setFormat] = useState<"square" | "story">("square");
+
+  const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null);
+
+  const generateSlides = async () => {
+    if (!idea.trim()) {
+      alert("Please enter an idea first!");
+      return;
+    }
+
+    try {
+      console.log("Clicked ✅");
+      setLoading(true);
+
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idea }),
+      });
+
+      const text = await res.text();
+      const data = JSON.parse(text);
+
+      let parsed: Slide[] = [];
+      try {
+        parsed = JSON.parse(data.result);
+      } catch (err) {
+        console.error("JSON parse error:", err);
+        alert("AI returned invalid format");
+        return;
+      }
+
+      setSlides(parsed);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("API error — check console");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+
+
+
+  
+  const regenerateSlide = async (index: number) => {
+    try {
+      setRegeneratingIndex(index); 
+
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idea }),
+      });
+
+      const text = await res.text();
+      const data = JSON.parse(text);
+      const parsed = JSON.parse(data.result);
+
+      if (parsed[index]) {
+        const newSlides = [...slides];
+        newSlides[index] = parsed[index];
+        setSlides(newSlides);
+      }
+    } catch (error) {
+      console.error("Regenerate error:", error);
+      alert("Failed to regenerate slide");
+    } finally {
+      setRegeneratingIndex(null); 
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+        padding: 40,
+        fontFamily: "Arial",
+      }}
+    >
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <h1
+          style={{
+            textAlign: "center",
+            fontSize: 32,
+            marginBottom: 20,
+            color: "white",
+            letterSpacing: 1,
+          }}
+        >
+          🚀 The Social Media Studio
+        </h1>
+
+        <textarea
+          placeholder="Enter your idea..."
+          value={idea}
+          onChange={(e) => setIdea(e.target.value)}
+          style={{
+            width: "100%",
+            height: 100,
+            padding: 12,
+            marginTop: 20,
+            borderRadius: 12,
+            border: "none",
+            background: "rgba(255,255,255,0.1)",
+            color: "white",
+            backdropFilter: "blur(10px)",
+          }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+       <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 15,
+  }}
+>
+  <button
+    onClick={generateSlides}
+    disabled={loading}
+    style={{
+      padding: "12px 25px",
+      background: "linear-gradient(135deg, #ff7e5f, #feb47b)",
+      color: "white",
+      border: "none",
+      borderRadius: 10,
+      cursor: "pointer",
+      fontWeight: "bold",
+      boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+    }}
+  >
+    {loading ? "Generating..." : "Generate"}
+  </button>
+
+  <button
+    onClick={() => setFormat("square")}
+    style={{
+      padding: "8px 15px",
+      borderRadius: 8,
+      border: "none",
+      cursor: "pointer",
+      background: format === "square" ? "#00c6ff" : "#ffffff15",
+      color: "white",
+    }}
+  >
+    📱 Post
+  </button>
+
+  <button
+    onClick={() => setFormat("story")}
+    style={{
+      padding: "8px 15px",
+      borderRadius: 8,
+      border: "none",
+      cursor: "pointer",
+      background: format === "story" ? "#00c6ff" : "#ffffff15",
+      color: "white",
+    }}
+  >
+    📲 Story
+  </button>
+</div>
+
+          
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div style={{ marginTop: 30 }}>
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              id={`slide-${index}`}
+              style={{
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                background: "rgba(255,255,255,0.08)",
+                backdropFilter: "blur(15px)",
+                color: "white",
+                padding: 25,
+                borderRadius: 20,
+                marginBottom: 30,
+                boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                aspectRatio: format === "square" ? "auto" : "9 / 16",
+                width: format === "square" ? 400 : 300,
+                margin: "0 auto 30px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+                gap: 12,
+                transition: "0.3s",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.02)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
+            >
+              {slide.image && (
+  <img
+  src={slide.image}
+  alt="slide"
+  onError={(e) => {
+    e.currentTarget.src =
+      "https://images.unsplash.com/photo-1588072432836-e10032774350";
+  }}
+  style={{
+    width: "100%",
+    height: 220,
+    objectFit: "cover",
+    borderRadius: 16,
+    marginBottom: 10,
+  }}
+/>
+)}
+<textarea
+  value={slide.title}
+  onChange={(e) => {
+    const newSlides = [...slides];
+    newSlides[index].title = e.target.value;
+    setSlides(newSlides);
+  }}
+  rows={2}
+  style={{
+    width: "100%",
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 15,
+    border: "none",
+    background: "transparent",
+    color: "white",
+    outline: "none",
+    textAlign: "center",
+    resize: "none",
+    lineHeight: 1.3,
+
+    overflow: "hidden",       
+    scrollbarWidth: "none",  
+  }}
+/>
+
+<p
+  style={{
+    opacity: 0.9,
+    textAlign: "center",
+    lineHeight: 1.5,
+    wordBreak: "break-word",
+    maxWidth: "90%", 
+  }}
+>
+  {slide.content}
+</p>
+
+
+              
+              <button
+                onClick={() => regenerateSlide(index)}
+                disabled={regeneratingIndex === index}
+                style={{
+                  marginTop: 10,
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  border: "none",
+                  cursor: "pointer",
+                  background: "#ffffff20",
+                  color: "white",
+                  opacity: regeneratingIndex === index ? 0.6 : 1,
+                }}
+              >
+                {regeneratingIndex === index
+                  ? "Generating..."
+                  : "🔁 Regenerate"}
+              </button>
+
+              <p
+                style={{
+                  marginTop: "auto",
+                  textAlign: "center",
+                  fontSize: 12,
+                  opacity: 0.7,
+                }}
+              >
+                The Social Media Studio ✨
+              </p>
+            </div>
+          ))}
         </div>
-      </main>
-    </div>
+      </div>
+  
   );
 }
